@@ -1,0 +1,160 @@
+{% extends "index.html" %}
+
+{% block title %} Mathematical Description  {% endblock %}
+
+{% block content %}  
+
+<div class="container mt-5">
+
+        <h2> Introduction </h2>
+    <p>
+        In this work, we are going to build joint alpha factors from the research paper<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2610571" target="_blank"> 
+        <b>"The Formation Process of Winners and  Losers in Momentum Investing". </b> </a>
+
+        <p >The paper develops a model showing that past returns and the formation process of past returns have joint effect 
+        on future expected returns. That means, the past behavior of a stock that has become a winner (bullish) or a 
+        looser (bearish) plays an important role in momentum investing.</p>
+
+        <p> The paper has shown that as long as two stocks share the same return over the past $n-$ month, the future expected 
+        return of the stock whose historical prices are convex shaped is not lower than the one with concave-shaped historical prices. 
+        In a more concrete terms, stocks with convex-shaped historical prices will possess higher future expected returns than 
+        the one with concave-shaped historical prices.</p>
+
+        <p> A polynomial quandratic model is is used to approximate the nonlinear pattern of historical prices. </p>
+
+        <p> In what follows, we are going to explore the paper to build a joint alpha factor for predicting future returns based on 
+        the formation patterns of past returns. The resulting alpha factor will be evaluated with performance metrics including information 
+        coefficient, turnover, sharpe ratio, and so on. </p>
+
+    </p>
+
+    <h2> Strategy Formulation </h2>
+
+    <p> 
+        First of all we define the notion of convextiy and concavity:
+
+        A real valuedfunction $f$ is convex in an interval $\mathbb{D}$, if for every $\lambda \in [0, 1]$,
+
+        $$f(\lambda x + (1-\lambda y) ) \leq \lambda f(x) + (1-\lambda) f(y)\quad \forall x, y \in \mathbb{D} $$
+
+        A real valuedfunction $f$ is convex in an interval $\mathbb{D}$, if for every $\lambda \in [0, 1]$,
+
+        $$f(\lambda x + (1-\lambda y) ) \geq \lambda f(x) + (1-\lambda) f(y)\quad \forall x, y \in \mathbb{D} $$
+
+        $\textbf{Properties}:$<br>
+
+        1. $f$ is convex if and only if $f^{\prime\prime}(x) \geq 0 \quad \forall x\in \mathbb{D}$.<br>
+        2. $f$ is concave if and only if $f^{\prime\prime}(x) \leq 0 \quad \forall x\in \mathbb{D}$.<br>
+
+        $\textbf{Example:}$<br>
+        1. $f(x) = x^2$ is convex.<br>
+        2. $f(x)=\sqrt{x}$ is concave.<br>
+
+        <h4> Approximating curves with polynomials </h4>
+        <p> stock's closing price curves are approximated with polynomials of the form $$y(t) = \beta t + \gamma t^2$$
+        where $t$ represents the number of days from the start of the stocks trajectory and $y(t)$ is the stock closing price at time $t$.
+
+        From the polynomial approximation, we can verify whether the approximation is convex or concave 
+        using $\textbf{Properties 1. or 2.}$, respectively.</p>
+
+        <h4> Accelerated Gain and Loss coefficients from stock price's curvature </h4>
+
+        From now on, the polynomial approximation is re-written  by specifying the meaning of its coefficients. That is 
+        $$y(t) = \text{gain}\times t + \text{acceleration} \times t^2$$
+
+        <p>The coefficient $\textbf{gain}$ represents the slop of the linear term of the polynomial. The linear coefficient 
+        primarily affects the tilt or slope of the curve, especially near the origin. Hence it captures the upward or downward trend of 
+        the stock price depending on whether it is posive or negative.</p>
+
+        The coefficient  $\textbf{acceleration}$ in front of the quadratic term $t^2$ determines the curvature of the graph. 
+        This descrbes the "convexity" or "concavity" of the curve as follows:<br>
+
+        <p> 1. If $\textbf{acceleration} > 0$, the curve is convex (or concave up), meaning it opens upwards. This is because 
+        as $t$ increases, the $t^2$ term, being squared, always adds a positive contribution to $y(t)$, pulling the curve upwards 
+        as t $t$ moves away from the origin. Therefore, if $\textbf{gain} > 0$, the trend of the stock is upward convex and reflects 
+        an <b>accelerated gain</b>, whereas if $\textbf{gain} < 0$, the trend of the stock is downward convex and reflects 
+        an <b>decelerated loss</b>. </p>
+            
+        <p> 2. If $\textbf{acceleration} < 0$, the curve is concave (or concave down), meaning it opens downwards. In this case, 
+        the contribution of the $t^2$ term is negative, pushing the curve downwards as $t$ moves away from the origin. 
+        Therefore, if $\textbf{gain} > 0$, the trend of the stock is downward concave and reflects a <b>decelerated gain</b>, 
+        whereas if $\textbf{gain} < 0$, the trend of the stock is downward concave and reflects a <b>accelerated loss</b>. </p>
+        
+        <p> Additionally, the magnitude of $\textbf{acceleration}$ affects how "sharp" or "broad" the curve is. Larger absolute values 
+        of $\textbf{acceleration}$ result in a steeper curve, indicating a stronger curvature, while smaller values produce a gentler curve.<br>
+
+        In short, the quadratic coefficient $\textbf{acceleration}$ determines the overall shape of the curve (its convexity or concavity) 
+        and how pronounced that curvature is.</p>
+        
+        <p>
+            <b> Examples:</b>
+
+            <p>1. <strong style="color: green;"> stock A:</strong> <br>
+            - $\textbf{gain} = 10,  \textbf{acceleration} = 3 \to$ <i style="color: green;"> accelerated gain</i> <br>
+            
+
+            2. <strong style="color: rgb(0, 128, 90);"> stock B:</strong><br>
+            - $\textbf{gain} = 10, \textbf{acceleration} = - 3 \to$ <i style="color: green;"> decelerated gain </i><br>
+
+            In this case, we expect more positve return on <strong style="color: green;"> stock A</strong> due to its 
+            $\text{accelerated gain}$. Therefore, when <b style="color: green;"> longing </b> the two stocks, we should put more money 
+            on <strong style="color: green;"> stock A</strong> and less money <strong style="color: green;"> stock B</strong>.
+        </p>
+
+            <p> 3. <strong style="color: red;"> stock C:</strong> <br>
+                - $\textbf{gain} = -10,  \textbf{acceleration} = 3 \to$ <i style="color: red;"> decelerated loss </i> <br>
+
+                4.<strong style="color: red;"> stock D:</strong> <br>
+                - $\textbf{gain} = -10,  \textbf{acceleration} = -3 \to$ <i style="color: red;"> accelerated loss </i> <br>
+
+                In this case, we expect more negative return on <strong style="color: red;"> stock D</strong> due to 
+                its <i style="color: red;"> accelerated loss </i>. Therefore, when shorting  <b style="color: red;"> shorting </b> the two stocks, 
+                we should put more money on <strong style="color: red;"> stock D</strong>  and less money 
+                on <strong style="color: red;"> stock C</strong>.
+            </p>
+
+
+        </p>
+
+
+        <h4> Alpha Factor construction </h4>
+        <p>
+            We can now formulate the following hypothesis: <br>  
+            - When $\textbf{acceleration}(+) \times \textbf{gain}(+)$ is large, then the signal generally means to take a larger long 
+            positiom.<br>
+
+            - When $\textbf{acceleration}(-) \times \textbf{gain}(-)$ is large, then the signal generally means to take a larger short 
+            position<br>
+
+            Therefore, if we convert the $\textbf{gain}$ and $\textbf{acceleration}$ coefficients into ranks, then multiply them 
+            together, the product of the ranked $\textbf{gain}$ times ranked $\textbf{acceleration}$ would represent an alpha factor 
+            referred to as a  <b>join alpha factor</b>.
+            <p>
+                1. ranked $\textbf{gain}$ is small  and ranked $\textbf{acceleration}$ is small $\implies$ 
+                <strong style="color: red;"> large short </strong> position, because the product is small.<br>
+
+                2. ranked $\textbf{gain}$ is large  and ranked $\textbf{acceleration}$ is large $\implies$  
+                <strong style="color: green;"> large long</strong> position, because the product is large.
+            </p>
+
+            <p> 
+                Note that 1. and 2. are conditional factors  because they are the combination of 
+                both <b>momentum</b> and <b>convexity</b> factors.
+           </p>
+
+            <p>
+            For the computation of the conditinal factors and the final joint factors, we need first to estimate the  coefficients  
+            $\textbf{gain}$ and $\textbf{acceleration}$. For that, we will use a <strong style="color: blue;"> multiple polynomial linear regression</strong>  
+            where independent variables are the $t$ and $t^2$ and the dependent variable is the stock price (adjusted closing price) time series. 
+            This regression yields estimates for the coefficients $\textbf{gain}$ and $\textbf{acceleration}$.
+            </p>
+
+           <b> Finally, we will create our alpha factor first by converting $\textbf{gain}$ and $\textbf{acceleration}$ 
+            into ranks and them multiply the ranks together to create a join factor. </b>
+        </p>
+
+    </p>
+ 
+</div>
+
+{% endblock %}

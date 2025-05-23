@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+<head>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+      /* Apply hover effect to all navbar links except Portfolio Optimization Dashboard */
+      .navbar-nav .nav-link:hover:not(.navbar-brand) {
+          background-color: #f8f9fa; /* Light gray background */
+          color: black !important; /* Text color changes to black for contrast */
+          border-radius: 5px; /* Rounded edges for the highlight */
+          transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for both */
+      }
+  
+      /* Keep Portfolio Performance unchanged */
+      .navbar-brand {
+          background-color: transparent !important;
+          color: white !important;
+      }
+  
+      /* Ensure default nav-link colors remain white */
+      .navbar-nav .nav-link {
+          color: white;
+      }
+  </style>
+  
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+    <body>
+        <!--<nav class="navbar navbar-light bg-light">
+            <form class="form-inline">
+              <button class="btn btn-outline-success" type="button">stok NVDIA</button>
+              <button class="btn btn-outline-primary" type="button">stock TSLA</button>
+              <button class="btn btn-outline-danger" type="button">stock AMZN</button>
+              <button class="btn btn-outline-secondary" type="button">stock AAPL</button>
+              <button class="btn btn-outline-info" type="button">stock GOOG</button>
+              <button class="btn btn-outline-warning" type="button">stock BA</button>
+
+            </form>
+          </nav> -->
+          <!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">World Bank Dashboard</a>
+            <button class="navbar-toggler" type="button" 
+            data-toggle="collapse" data-target="#navbarNavDropdown" 
+            aria-controls="navbarNavDropdown" aria-expanded="false" 
+            aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav" ml-auto>
+                <li class="nav-item">
+                  <a class="nav-link" href="https://www.udacity.com">Udacity</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="https://data.worldbank.org/">World Bank</a>
+                </li>
+              </ul>
+            </div>
+          </nav> -->
+          
+          <!--<nav class="navbar navbar-expand-lg navbar-light bg-light"> -->
+            <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" 
+            style="background-color: rgb(0, 0, 0);">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" 
+            data-target="#navbarTogglerDemo02"
+            aria-controls="navbarTogglerDemo02" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon" style="color: white;"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+              <a class="navbar-brand" href="#" style="color:white">Portfolio Performance</a>
+              <ul class="navbar-nav  ml-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link" href="#" style="color: white;">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#" style="color: white;">Link</a>
+                </li>
+                
+              </ul>
+
+            </div>
+          </nav> -->
+
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" style="background-color: rgb(0, 0, 0);">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" 
+            data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" 
+            aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="color: white;"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <a class="navbar-brand" href="#" style="color:white">Portfolio Optimization Dashboard</a>
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/strategy" style="color: white;">Trading Strategy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/portfolio_optimization" style="color: white;">Portfolio Optimization</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/backtest" style="color: white;">Backtest</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/description" style="color: white;">Descritpion</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+          
+          
+        <!--<h1>Musa's  Website</h1> -->
+
+        {% block content %}     {% endblock %}
+
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <!--<script src="static/plot1.js"></script>
+        <script src="static/plot2.js"></script> -->
+
+        <!-- Add math symbol into my html document -->
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script type="text/javascript"
+          src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+          </script>
+
+      
+
+
+    </body>
+
+    <footer>
+
+        <script type="text/javascript">
+            // plots the figure with id
+            // id must match the div id above in the html
+            var figures = {{figuresJSON | safe}};
+            var ids = {{ids | safe}};
+            for(var i in figures) {
+                Plotly.plot(ids[i],
+                    figures[i].data,
+                    figures[i].layout || {});
+            }
+        </script>
+        
+    </footer>
+    
+</html>
