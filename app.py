@@ -5,7 +5,7 @@ from src.create_figures_strategy import figures_strategy_for_webapp
 from src.create_figures_optimization import figures_optimization_for_webapp
 from src.create_figures_backtest import figures_backesting_for_webapp
 
-app = Flask("__name__")
+app = Flask("__name__", template_folder='app/templates', static_folder='app/static')
 
 @app.route("/")
 @app.route("/strategy")

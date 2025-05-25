@@ -1,0 +1,29 @@
+name: Portfolio Optimization and Backtesting Dashboard App CI (Conda)
+
+run-name: Run the portfolio optimization and backtesting tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: 3.10
+        environment-file: environment.yml
+        activate-environment: portfolio_backtester_env
+
+    - name: Run Flask syntax check
+      run: python -m py_compile app.py
+
