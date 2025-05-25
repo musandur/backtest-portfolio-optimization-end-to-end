@@ -1,0 +1,26 @@
+name: portfolio_backtester_env
+channels:
+  - defaults
+dependencies:
+  - alphalens
+  - cvxpy
+  - flask
+  - h5py
+  - jinja2
+  - matplotlib
+  - numpy
+  - pandas
+  - pip
+  - plotly
+  - pytables
+  - pytest
+  - python=3.10
+  - scikit-learn
+  - seaborn
+  - statsmodels
+  - streamlit
+  - yfinance
+  - pandas_market_calendars
+  - pip
+  - pip:
+    - python-dotenv
