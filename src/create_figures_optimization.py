@@ -1,6 +1,6 @@
-from data_manip import strategy_performance, utils
+from src import strategy_performance, utils
 #import utils #utils
-from data_manip import portfolio_optimization
+from src import portfolio_optimization
 import plotly.graph_objects as go
 import os
 import numpy as np
@@ -8,13 +8,12 @@ import numpy as np
 import pandas as pd
 
 
-# # portfolio construction initialization
-# portfolio_obj = portfolio_optimization.OptimalHoldings()
+# # portfolio constructio initialization
 
 hold_period = 21
 periods = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 21)
 
-path = 'data/stock_prices.h5'
+path = '../data/stock_prices.h5'
 base_path = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(base_path, path)
 
@@ -24,7 +23,7 @@ list_tickers, data = utils.get_universe(file_path)
 ret = data.pct_change(hold_period).dropna()
 ret_df = pd.DataFrame(ret.unstack(), columns=[f'{hold_period}_d_ret'])
 
-ff_df = pd.read_hdf("data_manip/data/FF_risk_factors.h5", key='df')
+ff_df = pd.read_hdf("./data/FF_risk_factors.h5", key='df')
 ff_df.drop(['RF'], axis=1, inplace=True)
 ff_and_ret_df = ff_df.join(ret_df)
 
@@ -44,7 +43,7 @@ def figures_optimization_for_webapp():
     # factor betas graph
     first_graph = []
     #betas_df = portfolio_optimization.get_beta_factors(ff_and_ret_df) # to be saved as a file for speed up
-    betas_df = pd.read_hdf("data_manip/data/po_betas_df.h5", key='df')
+    betas_df = pd.read_hdf("./data/po_betas_df.h5", key='df')
     factor_names = betas_df.columns.tolist()
     ticker_list = betas_df.index.tolist()
 
@@ -82,11 +81,11 @@ def figures_optimization_for_webapp():
     #alpha_data = straj_obj.alpha_factors_and_forward_returns(periods)
     #alpha_vector = alpha_data[['factor']].loc[alpha_data.index.unique('date')[-1]]
     #alpha_vector = alpha_vector.transform(utils.demean_and_normalize)                    # to be saved as a file to speed up 
-    alpha_vector = pd.read_hdf("data_manip/data/po_alpha_vector.h5", key='df')
+    alpha_vector = pd.read_hdf("./data/po_alpha_vector.h5", key='df')
 
     #optimal_weights = portfolio_obj.solve_optimal_holdings(alpha_vector, betas_df, S, F)
     #optimal_weights.rename(columns={0: 'optimal_weights'}, inplace=True)                  # to be saved as a file for speed up
-    optimal_weights = pd.read_hdf("data_manip/data/po_optimal_weights_df.h5", key='df')
+    optimal_weights = pd.read_hdf("./data/po_optimal_weights_df.h5", key='df')
 
     data = optimal_weights
     second_graph.append(go.Bar(

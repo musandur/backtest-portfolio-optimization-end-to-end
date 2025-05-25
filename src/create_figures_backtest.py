@@ -14,8 +14,8 @@ def figures_backesting_for_webapp():
     Output:
     List of plotly graphs to be used for the web app dashboard
     """
-    path1 = "data/attrib_df.h5"
-    path2 = "data/p_charac_df.h5"
+    path1 = "../data/attrib_df.h5"
+    path2 = "../data/p_charac_df.h5"
     base_path = os.path.dirname(os.path.abspath(__file__))
     file_path1 = os.path.join(base_path, path1)
     file_path2 = os.path.join(base_path, path2)

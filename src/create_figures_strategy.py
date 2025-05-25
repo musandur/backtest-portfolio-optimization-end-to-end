@@ -1,4 +1,4 @@
-from data_manip import strategy_performance, utils
+from src import strategy_performance, utils
 #import utils
 import plotly.graph_objects as go
 import os
@@ -6,7 +6,7 @@ import numpy as np
 from scipy.stats import norm
 import pandas as pd
 
-path = 'data/stock_prices.h5'
+path = '../data/stock_prices.h5'
 base_path = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(base_path, path)
 
@@ -32,7 +32,7 @@ def figures_strategy_for_webapp():
     first_graph = []
     # Add each metric as a bar trace
     #portfolio_performance = algo_trade_object.strategy_performance_metrics(alpha_data) # to be saved as file
-    portfolio_performance = pd.read_hdf('~/Documents/webapp_dashboard/data_manip/data/portfolio_performance.h5', key='df')
+    portfolio_performance = pd.read_hdf('./data/portfolio_performance.h5', key='df')
     for metric in portfolio_performance.columns:
         first_graph.append(go.Bar(
             x=portfolio_performance.index,
@@ -57,7 +57,7 @@ def figures_strategy_for_webapp():
     )
     # Secon graph: Strategy's return distribution
     #factor_returns = algo_trade_object.factor_returns_df(alpha_data) # to be saved as a file
-    factor_returns = pd.read_hdf("data_manip/data/factor_returns.h5", key='df')
+    factor_returns = pd.read_hdf("./data/factor_returns.h5", key='df')
     second_graph = []
     second_graph.append(go.Histogram(
         x=factor_returns['21D'],
@@ -112,7 +112,7 @@ def figures_strategy_for_webapp():
     
     # Third graph: Model prediction accuracy
     #mean_ret_by_quantile = algo_trade_object.mean_return_by_quantile(alpha_data) # to be saved as file
-    mean_ret_by_quantile = pd.read_hdf("data_manip/data/mean_ret_by_quantile.h5", key='df')
+    mean_ret_by_quantile = pd.read_hdf("./data/mean_ret_by_quantile.h5", key='df')
     third_graph = []
     third_graph.append(go.Bar(
                 x=mean_ret_by_quantile['21D'].index,

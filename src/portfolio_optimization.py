@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import cvxpy as cvx
 import statsmodels.api as sm
 from abc import ABC, abstractmethod
-from data_manip import strategy_performance, utils
+from src import strategy_performance, utils
 #import strategy_performance
 #import utils
 # import utils

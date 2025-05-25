@@ -9,7 +9,7 @@ from scipy.stats import norm
 
 # import utils module
 # from data_manip import utils
-from data_manip import utils
+from src import utils
 #import utils
 
 idx = pd.IndexSlice
