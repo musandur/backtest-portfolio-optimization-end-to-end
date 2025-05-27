@@ -136,18 +136,17 @@ def figures_strategy_for_webapp():
         # template='ggplot2'
     )
 
-    # fig = go.Figure(data=[mean_quant_quantile_bar], layout=layout)
-
-    # Display the Plotly Chart
-    # fig.show()
-     
+    
     # Fourth graph: Stragy vs. S&P500 Benchmark performance comparison 
     fourth_graph = []
     # test sp500 vs the strategy performance
     forward_21d_strtgy = factor_returns[['21D']]
-    sp500_dataset_df = pd.read_hdf(file_path, key='df')
-    sp500_data = sp500_dataset_df['Adj Close'].unstack('Ticker')
-    forward_21d_sp500 = pd.DataFrame(sp500_data.pct_change(21, fill_method=None).shift(-21).mean(axis=1).dropna(), columns=["S&P500"])
+
+    #sp500_dataset_df = pd.read_hdf(file_path, key='df')
+    #sp500_data = sp500_dataset_df['Adj Close'].unstack('Ticker')
+    #forward_21d_sp500 = pd.DataFrame(sp500_data.pct_change(21, fill_method=None).shift(-21).mean(axis=1).dropna(), columns=["S&P500"])
+    forward_21d_sp500 = pd.read_hdf("./data/fwd_ret_21d_sp500.h5", key="df")
+
     forward_21d_sp500 = forward_21d_sp500.loc[forward_21d_strtgy.index, :]
     sp500_strtgy_df = pd.concat([forward_21d_sp500, forward_21d_strtgy], axis=1)
     sp500_vs_strtgy_metrics = utils.performance_metrics(sp500_strtgy_df)
