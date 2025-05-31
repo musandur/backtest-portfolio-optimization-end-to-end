@@ -23,6 +23,9 @@ jobs:
         python-version: 3.10
         environment-file: environment.yml
         activate-environment: portfolio_backtester_env
+        channels: 
+          - conda-forge
+          - defaults
 
     - name: Run Flask syntax check
       run: python -m py_compile app.py
