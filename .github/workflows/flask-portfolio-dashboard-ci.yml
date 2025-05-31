@@ -34,11 +34,9 @@ jobs:
     - name: Run Flask syntax check
       run: python -m py_compile app.py
 
-    - name: Run tests with pytest
-      shell: bash
-      run: |
-        conda activate portfolio_backtester_env 
-        which python 
-        python --version 
-        pytest  
+    - name: Run tests with pytest 
+      run: |    
+        conda run -n portfolio_backtester_env which python 
+        conda run -n portfolio_backtester_env python --version 
+        conda run -n portfolio_backtester_env pytest 
 
