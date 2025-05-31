@@ -3,7 +3,9 @@ channels:
   - conda-forge 
   - defaults
 dependencies:
+  - python=3.10
   - alphalens
+  - boto3
   - cvxpy
   - flask
   - h5py
@@ -15,14 +17,11 @@ dependencies:
   - plotly
   - pytables
   - pytest
-  - python=3.10
   - scikit-learn
   - seaborn
   - statsmodels
   - streamlit
   - yfinance
   - pandas_market_calendars
-  - boto3
-  - pip
   - pip:
       - python-dotenv
