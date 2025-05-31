@@ -35,6 +35,8 @@ jobs:
       run: python -m py_compile app.py
 
     - name: Run tests with pytest
-      run: source activate portfolio_backtester_env && pytest
+      run: |
+       source activate portfolio_backtester_env
+       pytest
       shell: bash -l 
 
