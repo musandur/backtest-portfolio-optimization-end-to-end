@@ -20,11 +20,10 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        python-version: 3.10
         environment-file: environment.yml
         activate-environment: portfolio_backtester_env
         channels: conda-forge, defaults
-          
+        miniforge-variant: Mambaforge
           
 
     - name: Run Flask syntax check
