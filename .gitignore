@@ -1,8 +1,31 @@
-*pyc
+
+# Ignore Aws Credentials 
+.aws/
+
+
+# Ignore temporary notebooks or data dumps
+*.ipynb_checkpoints/
+*.tmp
+*.log
+
+# Python cache and compiled files
 __pycache__/
+*.py[cod]
+*.so
+
+# Environment files
 .env
-*.h5
-*.sqlite
-*.db
-data/
+*.env
+*.yml
+
+# OS junk
+.DS_Store
+
+# Conda environment lock files
+*.lock
+conda-meta/
+
+# VSCode or IDE folders
+.vscode/
+.idea/
 
