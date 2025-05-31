@@ -27,3 +27,7 @@ jobs:
     - name: Run Flask syntax check
       run: python -m py_compile app.py
 
+    - name: Run tests with pytest
+      run: pytest
+      shell: bash
+
