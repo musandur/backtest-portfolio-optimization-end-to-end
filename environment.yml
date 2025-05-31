@@ -1,5 +1,6 @@
 name: portfolio_backtester_env
 channels:
+  - conda-forge 
   - defaults
 dependencies:
   - alphalens
