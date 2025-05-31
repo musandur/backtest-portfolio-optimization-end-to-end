@@ -260,9 +260,43 @@ def get_universe(path_to_data, start_date='2019-01-01', end_date='2022-12-31'):
     # base_path = os.path.dirname(os.path.abspath(__file__))
     # file_path = os.path.join(base_path, self.path_to_data)
 
-    data_prices = pd.read_hdf(path_to_data, key="df")
+    # data_prices = pd.read_hdf(path_to_data, key="df") # for the h5 version
+    data_prices = pd.read_csv(path_to_data,
+                              index_col=[0, 1],
+                              parse_dates=[1])  # for the csv version
 
     df = data_prices.loc[:, idx[start_date:end_date], :]
+    # select 21 most traded assets in terms of highest volume
+    selected_assets = df['Adj Close'].mul(df.Volume)\
+        .groupby('Date')\
+        .rank(ascending=True)\
+        .unstack()\
+        .dropna()\
+        .mean(axis=1)\
+        .nlargest(21)\
+        .index\
+        .tolist()
+    # remove GOOGL ticker to avoid duplicates with GOOG
+    selected_assets = [x for x in selected_assets if x != 'GOOGL']
+    universe_df = df.loc[selected_assets, :]['Adj Close'].unstack('Ticker')
+
+    return selected_assets, universe_df
+
+
+def get_universe_from_aws_data(data, start_date='2019-01-01', end_date='2022-12-31'):
+    '''
+        extract the trading universe from the data imported from aws 
+        and the select corresponding tickers
+    '''
+    # base_path = os.path.dirname(os.path.abspath(__file__))
+    # file_path = os.path.join(base_path, self.path_to_data)
+
+    # data_prices = pd.read_hdf(path_to_data, key="df") # for the h5 version
+    # data_prices = pd.read_csv(path_to_data,
+    #                           index_col=[0, 1],
+    #                           parse_dates=[1])  # for the csv version
+
+    df = data.loc[:, idx[start_date:end_date], :]
     # select 21 most traded assets in terms of highest volume
     selected_assets = df['Adj Close'].mul(df.Volume)\
         .groupby('Date')\

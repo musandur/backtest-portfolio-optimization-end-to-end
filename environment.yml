@@ -21,6 +21,7 @@ dependencies:
   - streamlit
   - yfinance
   - pandas_market_calendars
+  - boto3
   - pip
   - pip:
-    - python-dotenv
+      - python-dotenv
