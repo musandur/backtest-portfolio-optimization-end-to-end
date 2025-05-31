@@ -22,12 +22,19 @@ jobs:
         auto-update-conda: true
         environment-file: environment.yml
         activate-environment: portfolio_backtester_env
-        channels: conda-forge, defaults          
+        channels: conda-forge, defaults
+
+    - name: Confirm environment + Python
+      run: |
+        conda info
+        conda list
+        which python
+        python --version          
 
     - name: Run Flask syntax check
       run: python -m py_compile app.py
 
     - name: Run tests with pytest
-      run: pytest
-      shell: bash
+      run: source activate portfolio_backtester_env && pytest
+      shell: bash -l 
 
