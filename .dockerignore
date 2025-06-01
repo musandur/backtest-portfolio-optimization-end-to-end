@@ -1,0 +1,12 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore system files
+.DS_Store
+
+# Ignore Git and local config files
+.git
+.gitignore
+.env
+
