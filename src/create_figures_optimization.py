@@ -14,13 +14,14 @@ from src import aws_s3bucket_data
 hold_period = 21
 periods = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 21)
 
-#path = '../data/stock_prices.h5'
-path = '../data/stock_prices.csv'
+# #path = '../data/stock_prices.h5'
+# path = '../data/stock_prices.csv'
 
-base_path = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(base_path, path)
+# base_path = os.path.dirname(os.path.abspath(__file__))
+# file_path = os.path.join(base_path, path)
 
-aws_df = aws_s3bucket_data.load_data_from_aws_s3_csv(bucket_name="equity-data-mndour", object_key="stock_prices.csv")
+# aws_df = aws_s3bucket_data.load_data_from_aws_s3_csv(bucket_name="equity-data-mndour", object_key="stock_prices.csv")
+aws_df = aws_s3bucket_data.load_data_from_aws_s3_csv()
 
 #list_tickers, data = utils.get_universe(file_path)
 list_tickers, data = utils.get_universe_from_aws_data(aws_df)
