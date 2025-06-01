@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import io
 
+
 def load_data_from_aws_s3_csv(bucket_name, object_key, region="eu-central-1", expiry_seconds=600):
     """
     Load a CSV file from AWS S3 using a pre-signed URL.
