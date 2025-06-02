@@ -28,8 +28,8 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Expose port 5000 for Flask
-EXPOSE 5000
+EXPOSE 5001
 
 # Command to run the app
-CMD ["flask", "run"]
+CMD ["python", "app.py"]
 
