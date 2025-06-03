@@ -1,7 +1,9 @@
-#  Portfolio Backtesting Dashboard (Flask + Docker)
+#  Portfolio Optimization and Backtesting Dashboard (Flask + Docker)
 
-This project is an algorithmic trading strategy for  **portfolio optimization and backtesting** whose performance metrics are implemented as a web app  **dashboard** built using **Flask** and  designed to help analyze historical performance of asset allocation strategies. 
-The algorithmic strategy is developed using 4 years (2019-2022) of  data from the S&P 500 universe and offers portfolio construction, optimization, and strategy evaluation features. The backtest strategy is evaluated in one year (2024). 
+This project presents an algorithmic trading strategy for **portfolio optimization and backtesting**, delivered through a web-based **dashboard** built with **Flask** and containerized using **Docker**.
+The dashboard is designed to help analyze the historical performance of asset allocation strategies.
+
+The algorithm is developed using four years of S&P 500 stock data (2019–2022) and supports portfolio construction, optimization, and performance evaluation. The backtesting is performed on out-of-sample data from the year 2024.
 
 ---
 
@@ -35,25 +37,22 @@ This dataset is assumed to be stored in an **AWS S3 bucket**, and accessed via a
 
 ```
 portfolio_backtester/
-├── app.py                      # Flask app entry point
-├── requirements.txt            # Python dependencies
-├── Dockerfile                  # Docker setup
-├-- .dockerignore               # variables not tracked by docker instructions
-├── .env                        # Environment variables (not committed)
-├-- app/
+├── app.py                          # Flask app entry point
+├── requirements.txt                # Python dependencies
+├── Dockerfile                      # Docker setup
+├-- .dockerignore                   # variables not tracked by docker instructions
+├── .env                            # Environment variables (not committed)
+├── app/
 |   ├── static/                     # Static files (CSS, images)
 |   ├── templates/                  # HTML templates for Flask
-
-├── templates/                  # HTML templates for Flask
-├── static/                     # Static files (CSS, images)
-├── src/                        # Source modules (data loading, plotting, etc.)
-├-- data/                       # h5 dataset for optimization results plotting
+├── src/                            # Source modules (data loading, plotting, etc.)
+├-- data/                           # h5 dataset for optimization results plotting
 
 ```
 
 ---
 
-## ⚙️ Environment Variables
+## ⚙️ Environment Variables 
 
 You must create a `.env` file in the root directory with the following keys (DO NOT commit it to version control):
 
