@@ -136,7 +136,7 @@ def get_idiosyncratic_var(ff_and_ret_df, factor_betas_df, ff_df):
     """Estimate the specific return's variance matrix
 
     Args:
-        ff_and_ret_df (df): Multi-Index DataFrame of the Fama-French 5-risk-factors columns  and the asset returns column. 
+        ff_and_ret_df (df): Multi-Index DataFrame of the Fama-French 5-risk-factors columns  and the asset returns column.
         factor_betas_df (df): Estimated Beta exposures
         ff_df (df): Fama-French 5-risk-factors DataFrame
 
