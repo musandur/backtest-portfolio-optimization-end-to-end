@@ -1,3 +1,45 @@
+# name: Portfolio Optimization and Backtesting Dashboard App CI (Conda)
+
+# run-name: Run the portfolio optimization and backtesting tests
+
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
+
+#     - name: Set up Miniconda
+#       uses: conda-incubator/setup-miniconda@v2
+#       with:
+#         auto-update-conda: true
+#         environment-file: environment.yml
+#         activate-environment: portfolio_backtester_env
+#         channels: conda-forge, defaults
+
+#     - name: Confirm environment + Python
+#       run: |
+#         conda info
+#         conda list
+#         which python
+#         python --version          
+
+#     - name: Run Flask syntax check
+#       run: python -m py_compile app.py
+
+#     - name: Run tests with pytest 
+#       run: |    
+#         conda run -n portfolio_backtester_env which python 
+#         conda run -n portfolio_backtester_env python --version 
+#         conda run -n portfolio_backtester_env pytest 
+
 name: Portfolio Optimization and Backtesting Dashboard App CI (Conda)
 
 run-name: Run the portfolio optimization and backtesting tests
@@ -34,9 +76,12 @@ jobs:
     - name: Run Flask syntax check
       run: python -m py_compile app.py
 
-    - name: Run tests with pytest 
-      run: |    
+    - name: Run portfolio optimization tests with pytest 
+      env:
+        PYTHONPATH: .  
+      run: |
         conda run -n portfolio_backtester_env which python 
         conda run -n portfolio_backtester_env python --version 
-        conda run -n portfolio_backtester_env pytest 
+        conda run -n portfolio_backtester_env pytest
 
+        
