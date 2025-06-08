@@ -32,10 +32,10 @@ ENV FLASK_RUN_HOST=0.0.0.0
 EXPOSE 5001
 
 # # Run the app
-#CMD ["python", "app.py"]
+CMD ["python", "app.py"]
 
 # Run with Gunicorn
 # CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5001", "app:app"]
-CMD ["gunicorn", "--workers=1", "--bind=0.0.0.0:5001", "app:app"]
+# CMD ["gunicorn", "--workers=1", "--bind=0.0.0.0:5001", "app:app"]
 # CMD ["gunicorn", "--worker-class=gevent", "--bind=0.0.0.0:5001", "--workers=1", "app:app"]
 
