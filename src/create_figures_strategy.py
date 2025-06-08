@@ -1,10 +1,11 @@
-from src import strategy_performance, utils
+from src import  utils
 #import utils
 import plotly.graph_objects as go
 import os
 import numpy as np
 from scipy.stats import norm
 import pandas as pd
+from src import aws_s3bucket_load_data
 
 path = '../data/stock_prices.h5'
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +33,17 @@ def figures_strategy_for_webapp():
     first_graph = []
     # Add each metric as a bar trace
     #portfolio_performance = algo_trade_object.strategy_performance_metrics(alpha_data) # to be saved as file
-    portfolio_performance = pd.read_hdf('./data/portfolio_performance.h5', key='df')
+
+    # csv version
+    # portfolio_performance = pd.read_hdf('./data/portfolio_performance.h5', key='df')
+    # portfolio_performance = pd.read_csv('data/strategy_optimization_2019_2023/strategy_performance_metrics.csv', index_col=[0])
+                                       
+    # aws s3 version
+    portfolio_performance = (aws_s3bucket_load_data.
+                             load_csv_from_aws_s3("strategy_optimization_2019_2023/strategy_performance_metrics.csv", 
+                                                  index_type="plain")
+                             )
+                                        
     for metric in portfolio_performance.columns:
         first_graph.append(go.Bar(
             x=portfolio_performance.index,
@@ -57,7 +68,16 @@ def figures_strategy_for_webapp():
     )
     # Secon graph: Strategy's return distribution
     #factor_returns = algo_trade_object.factor_returns_df(alpha_data) # to be saved as a file
-    factor_returns = pd.read_hdf("./data/factor_returns.h5", key='df')
+
+    # csv version
+    # factor_returns = pd.read_hdf("./data/factor_returns.h5", key='df')
+    # factor_returns = pd.read_csv("data/strategy_optimization_2019_2023/factor_returns.csv",
+    #                              index_col=[0],
+    #                              parse_dates=[0])
+    # aws s3 version
+    factor_returns = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/factor_returns.csv",
+                                                                 index_type="date")
+
     second_graph = []
     second_graph.append(go.Histogram(
         x=factor_returns['21D'],
@@ -112,7 +132,16 @@ def figures_strategy_for_webapp():
     
     # Third graph: Model prediction accuracy
     #mean_ret_by_quantile = algo_trade_object.mean_return_by_quantile(alpha_data) # to be saved as file
-    mean_ret_by_quantile = pd.read_hdf("./data/mean_ret_by_quantile.h5", key='df')
+
+    # csv version
+    # mean_ret_by_quantile = pd.read_hdf("./data/mean_ret_by_quantile.h5", key='df')
+    # mean_ret_by_quantile = pd.read_csv("data/strategy_optimization_2019_2023/mean_ret_by_quantile.csv",
+    #                                    index_col=[0])
+    # aws s3 version
+    mean_ret_by_quantile = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/mean_ret_by_quantile.csv",
+                                                                       index_type="plain")
+
+
     third_graph = []
     third_graph.append(go.Bar(
                 x=mean_ret_by_quantile['21D'].index,
@@ -145,7 +174,15 @@ def figures_strategy_for_webapp():
     #sp500_dataset_df = pd.read_hdf(file_path, key='df')
     #sp500_data = sp500_dataset_df['Adj Close'].unstack('Ticker')
     #forward_21d_sp500 = pd.DataFrame(sp500_data.pct_change(21, fill_method=None).shift(-21).mean(axis=1).dropna(), columns=["S&P500"])
-    forward_21d_sp500 = pd.read_hdf("./data/fwd_ret_21d_sp500.h5", key="df")
+
+    # csv version
+    # forward_21d_sp500 = pd.read_hdf("./data/fwd_ret_21d_sp500.h5", key="df")
+    # forward_21d_sp500 = pd.read_csv("data/strategy_optimization_2019_2023/fwd_ret_21d_sp500.csv",
+    #                                 index_col=[0],
+    #                                 parse_dates=[0])
+    # aws s3 version
+    forward_21d_sp500 = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/fwd_ret_21d_sp500.csv",
+                                                                    index_type="date")
 
     forward_21d_sp500 = forward_21d_sp500.loc[forward_21d_strtgy.index, :]
     sp500_strtgy_df = pd.concat([forward_21d_sp500, forward_21d_strtgy], axis=1)
