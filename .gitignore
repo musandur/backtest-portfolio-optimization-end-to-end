@@ -29,3 +29,8 @@ conda-meta/
 .vscode/
 .idea/
 
+# Ignore dataset files as they have migrated to aws s3 bucket
+data/
+
+
+
