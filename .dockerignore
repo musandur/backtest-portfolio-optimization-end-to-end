@@ -1,12 +1,54 @@
-# Ignore Python cache
+# # Ignore Python cache
+# __pycache__/
+# *.pyc
+
+# # Ignore system files
+# .DS_Store
+
+# # Ignore Git and local config files
+# .git
+# .gitignore
+# .env
+# # Ignore the dataset files
+# data/
+
+
+##### revisited .dockerignore
+
+# Ignore Aws Credentials 
+.aws/
+# Python cache and artifacts
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.ipynb_checkpoints/
+*.tmp
+*.log
 
-# Ignore system files
+
+# System and IDE files
 .DS_Store
+.vscode/
+.idea/
 
-# Ignore Git and local config files
+# Git files
 .git
 .gitignore
-.env
 
+# Environment and config files
+.env
+*.yml
+environment.yml
+
+# Local data folder not needed in container
+data/
+
+# Build artifacts
+dist/
+build/
+
+# Ignore the test folder only used in Github actions
+tests/
+*.ini

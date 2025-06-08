@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the whole project into the container
 COPY . /app/
@@ -31,6 +31,8 @@ ENV FLASK_RUN_HOST=0.0.0.0
 # Expose Flask port
 EXPOSE 5001
 
-# Run the app
-CMD ["python", "app.py"]
+# # Run the app
+# CMD ["python", "app.py"]
 
+# Run with Gunicorn
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5001", "app:app"]
