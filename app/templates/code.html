@@ -1,0 +1,53 @@
+{% extends "index.html"%}
+{% block title %}Code Viewer{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-1 border-right">
+        <div id="follow-me" class="mt-5">
+             <a href="#">
+                <img class="img-fluid ml-2" src="static/quaint_quant_logo.png" alt="my design logo"> 
+            </a> 
+            <div class="mt-4"> 
+                <a href="https://github.com/musandur/backtest-portfolio-optimization-end-to-end.git" target="_blank">
+                   <img class="img-fluid ml-2" src="static/githublogo.png" alt="github logo">
+                </a>
+            </div> 
+        </div>
+    </div> 
+
+<div class="container mt-5">
+    <h2 class="mb-4"> View Source Code</h2>
+
+    <div class="form-group">
+        <label for="codeSelector">Choose a section:</label>
+        <select id="codeSelector" class="form-control" onchange="loadCode()">
+            <option value="strategy">Strategy</option>
+            <option value="optimization">Optimization</option>
+            <option value="backtesting">Backtesting</option>
+        </select>
+    </div>
+
+    <pre><code id="codeBlock" class="language-python"># Python code will appear here...</code></pre>
+</div>
+
+<script>
+function loadCode() {
+    const section = document.getElementById("codeSelector").value;
+    fetch(`/code/${section}`)
+        .then(response => response.text())
+        .then(code => {
+            const block = document.getElementById("codeBlock");
+            block.textContent = code;
+            Prism.highlightElement(block);
+        })
+        .catch(error => {
+            document.getElementById("codeBlock").textContent = `Error loading code: ${error}`;
+        });
+}
+
+// Initial load
+window.onload = loadCode;
+</script>
+{% endblock %}
