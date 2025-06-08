@@ -1,12 +1,13 @@
-from src import strategy_performance, utils
+#from src import strategy_performance, utils
+from src import utils
 #import utils #utils
-from src import portfolio_optimization
+#from src import portfolio_optimization
 import plotly.graph_objects as go
-import os
+#import os
 import numpy as np
 #from scipy.stats import norm
 import pandas as pd
-from src import aws_s3bucket_data 
+from src import aws_s3bucket_load_data
 
 
 # # portfolio constructio initialization
@@ -21,7 +22,8 @@ periods = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 21)
 # file_path = os.path.join(base_path, path)
 
 # aws_df = aws_s3bucket_data.load_data_from_aws_s3_csv(bucket_name="equity-data-mndour", object_key="stock_prices.csv")
-aws_df = aws_s3bucket_data.load_data_from_aws_s3_csv()
+aws_df = aws_s3bucket_load_data.load_csv_from_aws_s3("stock_prices.csv",
+                                                     index_type="multi")
 
 #list_tickers, data = utils.get_universe(file_path)
 list_tickers, data = utils.get_universe_from_aws_data(aws_df)
@@ -30,8 +32,16 @@ list_tickers, data = utils.get_universe_from_aws_data(aws_df)
 ret = data.pct_change(hold_period).dropna()
 ret_df = pd.DataFrame(ret.unstack(), columns=[f'{hold_period}_d_ret'])
 
-ff_df = pd.read_hdf("./data/FF_risk_factors.h5", key='df')
+# csv version
+#ff_df = pd.read_hdf("./data/FF_risk_factors.h5", key='df')
+# ff_df = pd.read_csv("data/factors/ff5_factors.csv",
+#                     index_col=[0],
+#                     parse_dates=[0])
+# aws s3 version
+ff_df = aws_s3bucket_load_data.load_csv_from_aws_s3("factors/ff5_factors.csv",
+                                                    index_type="date")
 ff_df.drop(['RF'], axis=1, inplace=True)
+# aws version
 ff_and_ret_df = ff_df.join(ret_df)
 
 
@@ -50,7 +60,13 @@ def figures_optimization_for_webapp():
     # factor betas graph
     first_graph = []
     #betas_df = portfolio_optimization.get_beta_factors(ff_and_ret_df) # to be saved as a file for speed up
-    betas_df = pd.read_hdf("./data/po_betas_df.h5", key='df')
+    # csv version
+    # betas_df = pd.read_hdf("./data/po_betas_df.h5", key='df')
+    # betas_df = pd.read_csv("data/strategy_optimization_2019_2023/po_betas_df.csv",
+    #                        index_col=[0])
+    # aws s3 version
+    betas_df = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/po_betas_df.csv",
+                                                           index_type="plain")
     factor_names = betas_df.columns.tolist()
     ticker_list = betas_df.index.tolist()
 
@@ -81,19 +97,32 @@ def figures_optimization_for_webapp():
     
     # next optimal weights graph
     second_graph = []
-    F = portfolio_optimization.get_risk_factor_cov_mat(ff_df, ff_and_ret_df)
-    S = portfolio_optimization.get_idiosyncratic_var(ff_and_ret_df, betas_df, ff_df)   
+    # F = portfolio_optimization.get_risk_factor_cov_mat(ff_df, ff_and_ret_df)
+    # S = portfolio_optimization.get_idiosyncratic_var(ff_and_ret_df, betas_df, ff_df)   
 
     # optimal weights
     #alpha_data = straj_obj.alpha_factors_and_forward_returns(periods)
     #alpha_vector = alpha_data[['factor']].loc[alpha_data.index.unique('date')[-1]]
     #alpha_vector = alpha_vector.transform(utils.demean_and_normalize)                    # to be saved as a file to speed up 
-    alpha_vector = pd.read_hdf("./data/po_alpha_vector.h5", key='df')
+
+    # csv version
+    #alpha_vector = pd.read_hdf("./data/po_alpha_vector.h5", key='df')
+    # alpha_vector = pd.read_csv("data/strategy_optimization_2019_2023/po_alpha_vector.csv",
+    #                            index_col=[0])
+    # aws s3 version
+    alpha_vector = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/po_alpha_vector.csv",
+                                                               index_type="plain")
 
     #optimal_weights = portfolio_obj.solve_optimal_holdings(alpha_vector, betas_df, S, F)
     #optimal_weights.rename(columns={0: 'optimal_weights'}, inplace=True)                  # to be saved as a file for speed up
-    optimal_weights = pd.read_hdf("./data/po_optimal_weights_df.h5", key='df')
 
+    # csv version
+    #optimal_weights = pd.read_hdf("./data/po_optimal_weights_df.h5", key='df')
+    # optimal_weights = pd.read_csv("data/strategy_optimization_2019_2023/po_optimal_weights_df.csv",
+    #                               index_col=[0])
+    # aws s3 version 
+    optimal_weights = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/po_optimal_weights_df.csv",
+                                                                  index_type="plain")
     data = optimal_weights
     second_graph.append(go.Bar(
         x=data.index.tolist(),
