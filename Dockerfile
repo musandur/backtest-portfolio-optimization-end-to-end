@@ -35,4 +35,6 @@ EXPOSE 5001
 # CMD ["python", "app.py"]
 
 # Run with Gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5001", "app:app"]
+# CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5001", "app:app"]
+CMD ["gunicorn", "--workers=1", "--threads=2", "--bind=0.0.0.0:5001", "app:app"]
+
