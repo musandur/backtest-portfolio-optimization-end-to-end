@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 import os
-
+from src import aws_s3bucket_load_data
 
 def figures_backesting_for_webapp():
     """
@@ -14,15 +14,28 @@ def figures_backesting_for_webapp():
     Output:
     List of plotly graphs to be used for the web app dashboard
     """
-    path1 = "../data/attrib_df.h5"
-    path2 = "../data/p_charac_df.h5"
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    file_path1 = os.path.join(base_path, path1)
-    file_path2 = os.path.join(base_path, path2)
-    #port_attribution_df = pd.read_hdf("data_maip/data/attrib.h5", key='df')
-    port_attribution_df = pd.read_hdf(file_path1)
-    #port_charac_df = pd.read_hdf("data_manip/data/port_charac.h5", key='df')
-    port_charac_df = pd.read_hdf(file_path2)
+    # path1 = "../data/backtest/2024_backtest_pnl_attribution_df.csv"  # "attrib_df.h5"
+    # path2 = "../data/backtest/2024_backtest_port_charac.csv"  # "p_charac_df.h5"
+    # base_path = os.path.dirname(os.path.abspath(__file__))
+    # file_path1 = os.path.join(base_path, path1)
+    # file_path2 = os.path.join(base_path, path2)
+    # csv version
+    # port_attribution_df = pd.read_hdf(file_path1)
+    # port_attribution_df = pd.read_csv(file_path1, 
+    #                                   index_col=[0],
+    #                                   parse_dates=[0])
+    # aws s3 version
+    port_attribution_df = aws_s3bucket_load_data.load_csv_from_aws_s3("backtest/2024_backtest_pnl_attribution_df.csv",
+                                                                      index_type="date")
+
+    # csv version
+    # port_charac_df = pd.read_hdf(file_path2)
+    # port_charac_df = pd.read_csv(file_path2, 
+    #                              index_col=[0],
+    #                              parse_dates=[0])
+    # aws s3 version
+    port_charac_df = aws_s3bucket_load_data.load_csv_from_aws_s3("backtest/2024_backtest_port_charac.csv",
+                                                                 index_type="date")
 
     # First graph: PnL Distribution
     pnl = port_attribution_df['daily_PnL']
