@@ -1,7 +1,3 @@
-# def test_pace_holder():
-#     assert 1 == 1
-
-
 # import pytest
 from unittest.mock import patch, MagicMock
 import numpy as np
