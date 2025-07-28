@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request  # redirect, url_for
-from flask import Response
+from flask import Flask, render_template, Response
 import plotly
 import json
 
@@ -13,7 +12,6 @@ app = Flask("__name__", template_folder='app/templates', static_folder='app/stat
 @app.route("/")
 @app.route("/strategy")
 def strategy_metrics():
-    #figures = return_figures()
     figures = figures_strategy_for_webapp()
 
     # plot ids for the html id tag
@@ -29,7 +27,6 @@ def strategy_metrics():
 
 @app.route("/portfolio_optimization")
 def portfolio_optimization():
-    #figures = return_figures()
     figures = figures_optimization_for_webapp()
 
     # plot ids for the html id tag
@@ -45,8 +42,7 @@ def portfolio_optimization():
 
 @app.route("/backtest")
 def backtest():
-    #return render_template("backtest.html")
-    #figures = return_figures()
+    
     figures = figures_backesting_for_webapp()
 
     # plot ids for the html id tag
@@ -64,26 +60,6 @@ def backtest():
 def description():
     return render_template("description.html")
 
-
-# @app.route("/code")
-# def code_viewer():
-#     option = request.args.get("option", "strategy")  # Default to 'strategy'
-    
-#     code_map = {
-#         "strategy": "src/create_figures_strategy.py",
-#         "optimization": "src/create_figures_optimization.py",
-#         "backtesting": "src/create_figures_backtest.py"
-#     }
-    
-#     selected_file = code_map.get(option, code_map["strategy"])
-
-#     try:
-#         with open(selected_file, "r") as f:
-#             code_content = f.read()
-#     except FileNotFoundError:
-#         code_content = "# Error: File not found."
-
-#     return render_template("code.html", code=code_content, selected=option)
 
 @app.route("/code")
 def code_home():
