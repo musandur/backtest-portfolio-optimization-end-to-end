@@ -1,7 +1,6 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import scipy
 from tqdm import tqdm
@@ -18,14 +17,6 @@ v_filler = VolumeFiller(nan_val, zero_val, neg_val)
 
 
 class BacktestData(AlgoStrategy):
-
-    # static variables
-    df = pd.read_hdf("data/stock_prices.h5", key="df")
-
-    # ff5f = pd.read_hdf("data_manip/data/FF_risk_factors.h5")
-    # ff5f.drop(['RF'], axis=1, inplace=True)
-    # ff5f = ff5f.loc[all_dates, :]
-    # ff5f.index.name = 'Date'
 
     def __init__(self, tickers, backtest_universe_df, backtest_dates, num_lookback_days, holding_period, risk_aversion):
         super().__init__(tickers, backtest_universe_df)
@@ -100,23 +91,14 @@ class BacktestData(AlgoStrategy):
 
         for past_date, actual_date in zip(self.all_dates, self.backtest_dates):
             backtest_date = actual_date.strftime("%Y%m%d")
-            #print(ret_df)
-            #period_ret = ret_sort.loc[:, past_date:actual_date]
-
             period_ret = ret.loc[:, past_date:actual_date]
             period_ret = period_ret.loc[self.ticker_list, :]
-            #period_ret = ret_df.loc[idx[ticker_list, past_date:actual_date], :]
             period_ff_risk = ff5f.loc[past_date:actual_date, :]
             period_ff_and_ret = period_ff_risk.join(period_ret)
-            #print(period_ff_and_ret)
 
             betas_df = portfolio_optimization.get_beta_factors(period_ff_and_ret).dropna()
             betas_df = betas_df.loc[self.ticker_list, :]
-            #print(betas_df)
             
-            #betas_df.loc[:, "ALPHA"] = fac_data.loc[actual_date, 'alpha_factor_normalize']
-            #betas_df.loc[:, "return"] = fac_data.loc[actual_date, 'lookforward_ret']
-
             factor_betas_dict[backtest_date] = betas_df.copy()
             factor_betas_dict[backtest_date].loc[:, "ALPHA"] = fac_data.loc[actual_date, 'alpha_factor_normalize']
             factor_betas_dict[backtest_date].loc[:, "fwd_return"] = fac_data.loc[actual_date, 'lookforward_ret']
@@ -130,12 +112,6 @@ class BacktestData(AlgoStrategy):
 
             factor_betas_dict[backtest_date].loc[:, 'idiosync_ret'] = model.resid
             
-            # end 
-
-            # print(factor_betas_dict)
-            #print("\n")
-            # print(betas_df)
-
             S = portfolio_optimization.get_idiosyncratic_var(period_ff_and_ret, betas_df, period_ff_risk)  
             idiosyncratic_var_mat_dict[backtest_date] = S
             
@@ -148,7 +124,7 @@ class BacktestData(AlgoStrategy):
         dict_factor_matrices['idiosyncratic'] = idiosyncratic_var_mat_dict
         dict_factor_matrices['f_returns'] = factor_returns_dict
                                                                 
-        return dict_factor_matrices  # [factor_betas_dict, risk_cov_mat_dict, idiosyncratic_var_mat_dict]
+        return dict_factor_matrices
     
     def get_actual_lambda(self, actual_date):
         assert 'Lambda' in self.universe.columns, "run 'set_adv_and_lambda' first"
@@ -161,12 +137,7 @@ class BacktestData(AlgoStrategy):
                         .loc[pd.to_datetime(actual_date, format='%Y%m%d'), ['Lambda']]
         return lambda_df
         
-    # def get_actual_alpha(self, actual_date, fac_and_fwd_data):
-    #     assert 'alpha_factor_normalize' in fac_and_fwd_data.columns, "run 'get_factor_data' first"
-        
-    #     alpha_df = fac_and_fwd_data.loc[pd.to_datetime(actual_date, format='%Y%m%d'), ['alpha_factor_normalize']]
-                                          
-    #     return alpha_df
+
     def get_objective_function(self, h0, Q, specific_var, alpha_vec, Lambda):
 
         def objective_func(h):
@@ -215,7 +186,6 @@ class BacktestData(AlgoStrategy):
         Q = np.matmul(G, BT)
         QT = Q.transpose()
         Lambda = self.get_actual_lambda(actual_date)
-        #alpha_vec = bd.get_actual_alpha(actual_date, fac_data)
         alpha_vec = factor_betas[actual_date][['ALPHA']]
 
         h0 = previous_holdings.values.flatten()
@@ -290,8 +260,6 @@ class BacktestData(AlgoStrategy):
         for dt in self.backtest_dates:
             date = dt.strftime('%Y%m%d')
 
-            #optimal_port = backtest_results_dict[date]
-
             holding = backtest_results_dict[date]['opt.portfolio']
             fwd_ret = factor_matrices['betas'][date][['fwd_return']]
             attribution_df.at[dt, 'daily_PnL'] = np.dot(holding.values.flatten(), fwd_ret.values.flatten())
@@ -320,9 +288,7 @@ class BacktestData(AlgoStrategy):
             p = backtest_results_dict[date]
             tradelist = holdings_traded_dict[date]
             h = p['opt.portfolio']['h.opt']
-            
-            # TODO: Implement
-            
+                        
             df.at[dt, "long"] = sum(h[h > 0])
             df.at[dt, "short"] = sum(h[h < 0])
             df.at[dt, "net"] = sum(h)
@@ -334,99 +300,10 @@ class BacktestData(AlgoStrategy):
 
 if __name__ == '__main__':
     print("Inplace Calling\n")
-
-    ticker_list, _ = utils.get_universe("data/stock_prices.h5", start_date='2023-12-01', end_date='2023-12-31')
-    df = pd.read_hdf("data/stock_prices.h5", key="df")
-
-    one_year_2024_df = df.loc[idx[:, '2024'], :]
-    one_year_2024_df = one_year_2024_df['Adj Close'].unstack('Ticker')
-    one_year_2024_df = one_year_2024_df.loc[:, ticker_list]
-    print(one_year_2024_df.head())
-
-    print(one_year_2024_df.tail())
-
-    obj = AlgoStrategy(ticker_list, one_year_2024_df)
-
-    forward_period = [21]
-    fac_data = obj.alpha_factors_and_forward_returns(forward_period)
-    fac_data = fac_data[fac_data.columns[:-1]]
-    fac_data['alpha_factor_normalize'] = fac_data['factor'].groupby('date').transform(utils.demean_and_normalize)
-    fac_data.rename(columns={'21D': 'lookforward_ret'}, inplace=True)
-    # print(fac_data)
-    
-    backtest_dates = fac_data.index.unique('date')
-
     bd = BacktestData(ticker_list,
                       one_year_2024_df,
                       backtest_dates,
                       num_lookback_days=3*365,
                       holding_period=[21],
                       risk_aversion=1.0e-5)
-    
-    # set up inputs for the backtesting
-    bd.set_return()
-    bd.set_adv_and_lambda()
-    factor_mats = bd.get_estimate_factor_matrices()
 
-    # run the backtest optimizer
-    prev_holdings = pd.DataFrame({'h.opt.previous': np.zeros(len(ticker_list))}, index=ticker_list)
-    prev_holdings.index.name = 'Ticker'
-
-    backtest_results, trades = bd.run_backtest_optimizer(prev_holdings, factor_mats)
-
-    attribution_df = bd.PnL_attribution(backtest_results, factor_mats)
-    portfolio_characs = bd.build_portfolio_characteristics(backtest_results, trades)
-    attribution_df.to_hdf("data/attrib_df.h5", key='df')
-    portfolio_characs.to_hdf("data/p_charac_df.h5", key='df')
-
-    print(attribution_df)
-    print("\n")
-    print(portfolio_characs)
-
-    pnl = attribution_df['daily_PnL']
-    
-    plt.figure(figsize=(10, 6))
-    plt.plot(np.cumsum(pnl))
-    plt.show()
-
-    plt.figure(figsize=(10, 6))
-    plt.hist(pnl, bins=50, alpha=0.7, label='PnL Distribution')
-    plt.legend()
-    # plt.axvline(np.percentile(pnl, 100 * (1 - confidence_level)), color='red', linestyle='dashed', label='VaR (95%)')
-    plt.title("PnL Distribution")
-    plt.xlabel("PnL")
-    plt.ylabel("Frequency")
-    # plt.legend()
-    plt.show()
-
-    confidence_level = .95
-    VaR = - np.percentile(pnl, 100*(1-confidence_level))
-    print(f"Value at Risk {VaR}")
-    # expected shortfall
-    ieval = pnl > VaR
-    ES = np.sum(pnl * ieval) / np.sum(ieval)
-    print(f"Expected shortfall: {ES}")
-    plt.figure(figsize=(10, 6))
-    plt.hist(pnl, bins=50, alpha=0.7, label='PnL Distribution')
-    plt.axvline(-VaR, color='red', linestyle='--', linewidth=2, label=f'VaR 95% ({VaR:.2f})')
-    plt.axvline(-ES, color='purple', linestyle='--', linewidth=2, label=f'CVaR 95% ({ES:.2f})')
-    plt.title("PnL Distribution with VaR and CVaR (95%)")
-    plt.xlabel("PnL")
-    plt.ylabel("Frequency")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-    attribution_df.plot()
-    plt.show()
-
-
-
-
-
-
-
-#bd = BacktestData(ticker_list, one_year_2024_df, backtest_dates, 1) 
-
-# fd = bd.get_factor_data()<

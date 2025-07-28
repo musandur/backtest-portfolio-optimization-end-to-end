@@ -7,9 +7,6 @@ import cvxpy as cvx
 import statsmodels.api as sm
 from abc import ABC, abstractmethod
 from src import strategy_performance, utils
-#import strategy_performance
-#import utils
-# import utils
 
 
 class AbstractClassOptimalPortfolio(ABC):
@@ -107,8 +104,8 @@ class OptimalHoldings(AbstractClassOptimalPortfolio):
 
         return constraints
     
-    
 # Optimization function
+
 
 def get_beta_factors(ff_and_ret_df):
     """ 
@@ -183,32 +180,6 @@ def demean_and_normalize(x):
     return demean(x) / abs(demean(x)).sum()
 
 
-# take out the function
-# def get_optimal_weights(alpha_vector, fama_fac_and_return, factor_data):
-#     '''
-#     Function finding the optimal weights for an optimal portfolio
-    
-#     INPUTS:
-#         alpha_vector: alpha values for  a selected day.
-#         fama_fac_and_return: Multi-Index DataFrame of the Fama-French 5-factors and the 10-day asset returns.
-#         factor_data: Fama-French 5-factors DataFrame.
-#     RETURN:
-#         opt_weights: Single column DataFrame of the optimal weights with underlying  as index.
-#     '''
-
-#     optimal_weigths = OptimalHoldings()
-
-#     factor_betas, specific_returns = factor_betas_and_specific_return(fama_fac_and_return, factor_data) 
-#     date_idx = fama_fac_and_return['return'].index.unique('date')
-#     factor_cov_matrix = np.sqrt(252)*np.cov(factor_data.loc[date_idx, :].T, ddof=1)
-#     idiosynchratic_var_vector = 252*specific_returns.var(ddof=1)
-
-#     opt_wights_df = optimal_weigths.solve_optimal_holdings(alpha_vector, factor_betas_df, factor_cov_matrix, idiosynchratic_var_vector)
-#     opt_wights_df.rename(columns={0:'optimal_weights'}, inplace=True)
-
-#     return opt_wights_df
-
-
 if __name__ == '__main__':
     print("Inplace Calling. No output expected!")
     hold_period = 21
@@ -246,13 +217,6 @@ if __name__ == '__main__':
     optimal_weights.to_hdf("data/po_optimal_weights_df.h5", key='df')
     print(optimal_weights)
 
-    # optimal_weights.plot.bar()
-    # plt.show()
-
-    # alpha_vector.plot.bar()
-    # plt.show()
-    # betas_df.T.plot.bar()
-    # plt.show()
     factor_names = betas_df.columns.tolist()
     ticker_list = list(betas_df.index)
     fig, ax = plt.subplots(figsize=(16, 5))
@@ -276,12 +240,5 @@ if __name__ == '__main__':
 
     # plot the beta exposures with plotly
     fig = go.Figure()
-
-    # for ticker, values in zip(ticker_list, data):
-
-
-
-    ## Now test the plotting with pyplot
-
 
 

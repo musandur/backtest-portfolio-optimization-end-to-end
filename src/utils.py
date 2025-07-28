@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
-#import alphalens as al
 from scipy.stats import mode
-# from datetime import timedelta
 import pandas_market_calendars as pd_mcal
+import alphalens as al
 
 idx = pd.IndexSlice
 
@@ -257,10 +256,7 @@ def get_universe(path_to_data, start_date='2019-01-01', end_date='2022-12-31'):
     '''
         extract the trading universe from the data and the selcted tickers
     '''
-    # base_path = os.path.dirname(os.path.abspath(__file__))
-    # file_path = os.path.join(base_path, self.path_to_data)
-
-    # data_prices = pd.read_hdf(path_to_data, key="df") # for the h5 version
+    
     data_prices = pd.read_csv(path_to_data,
                               index_col=[0, 1],
                               parse_dates=[1])  # for the csv version
@@ -288,13 +284,6 @@ def get_universe_from_aws_data(data, start_date='2019-01-01', end_date='2022-12-
         extract the trading universe from the data imported from aws 
         and the select corresponding tickers
     '''
-    # base_path = os.path.dirname(os.path.abspath(__file__))
-    # file_path = os.path.join(base_path, self.path_to_data)
-
-    # data_prices = pd.read_hdf(path_to_data, key="df") # for the h5 version
-    # data_prices = pd.read_csv(path_to_data,
-    #                           index_col=[0, 1],
-    #                           parse_dates=[1])  # for the csv version
 
     df = data.loc[:, idx[start_date:end_date], :]
     # select 21 most traded assets in terms of highest volume
@@ -337,8 +326,6 @@ def fetch_backward_dates_and_concate(alpha_dates_index, num_days_offset=365):
     # get the final backward trading date
     start_backward_date = end_backward_date - pd.DateOffset(days=num_days_offset)
 
-    # start_backward_date = end_backward_date - pd.DateOffset(days=365)
-
     # get the NYSE trading calendar
     nyse = pd_mcal.get_calendar('NYSE')
 
@@ -347,8 +334,6 @@ def fetch_backward_dates_and_concate(alpha_dates_index, num_days_offset=365):
     
     # Convert to the naive (no timezone) index for simplicity and without loss of generality
     schedule = schedule.tz_localize(None)
-
-    # print(schedule)
 
     # now concatenate the lookback years dates with the trading dates to get the whole historical dates
     historical_backtest_dates = schedule.union(alpha_dates_index[1:])

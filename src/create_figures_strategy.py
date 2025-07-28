@@ -11,11 +11,6 @@ path = '../data/stock_prices.h5'
 base_path = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(base_path, path)
 
-# periods = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 21)
-# list_tickers, universe_df = utils.get_universe(file_path)
-# algo_trade_object = strategy_performance.AlgoStrategy(list_tickers, universe_df)
-# alpha_data = algo_trade_object.alpha_factors_and_forward_returns(periods)
-
 
 def figures_strategy_for_webapp():
 
@@ -31,13 +26,7 @@ def figures_strategy_for_webapp():
 
     # First graph: Portfolio performance metrics
     first_graph = []
-    # Add each metric as a bar trace
-    #portfolio_performance = algo_trade_object.strategy_performance_metrics(alpha_data) # to be saved as file
-
-    # csv version
-    # portfolio_performance = pd.read_hdf('./data/portfolio_performance.h5', key='df')
-    # portfolio_performance = pd.read_csv('data/strategy_optimization_2019_2023/strategy_performance_metrics.csv', index_col=[0])
-                                       
+                               
     # aws s3 version
     portfolio_performance = (aws_s3bucket_load_data.
                              load_csv_from_aws_s3("strategy_optimization_2019_2023/strategy_performance_metrics.csv", 
@@ -62,18 +51,9 @@ def figures_strategy_for_webapp():
         xaxis=dict(title="Holding Periods", tickangle=-45),
         yaxis=dict(title="Values"),
         barmode='group',
-        # template='ggplot2,
-        # legend=dict(title="Legend:", orientation="v", x=0.5, xanchor="center")
         legend=dict(title="Legend:", orientation="h", y=1.1, yanchor='top')
     )
     # Secon graph: Strategy's return distribution
-    #factor_returns = algo_trade_object.factor_returns_df(alpha_data) # to be saved as a file
-
-    # csv version
-    # factor_returns = pd.read_hdf("./data/factor_returns.h5", key='df')
-    # factor_returns = pd.read_csv("data/strategy_optimization_2019_2023/factor_returns.csv",
-    #                              index_col=[0],
-    #                              parse_dates=[0])
     # aws s3 version
     factor_returns = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/factor_returns.csv",
                                                                  index_type="date")
@@ -127,20 +107,9 @@ def figures_strategy_for_webapp():
     )
 
     # Combine the plots into a figure
-    # fig = go.Figure(data=[histogram, normal_dist, mean_line], layout=layout)
-    # fig.show()
-    
-    # Third graph: Model prediction accuracy
-    #mean_ret_by_quantile = algo_trade_object.mean_return_by_quantile(alpha_data) # to be saved as file
-
-    # csv version
-    # mean_ret_by_quantile = pd.read_hdf("./data/mean_ret_by_quantile.h5", key='df')
-    # mean_ret_by_quantile = pd.read_csv("data/strategy_optimization_2019_2023/mean_ret_by_quantile.csv",
-    #                                    index_col=[0])
     # aws s3 version
     mean_ret_by_quantile = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/mean_ret_by_quantile.csv",
                                                                        index_type="plain")
-
 
     third_graph = []
     third_graph.append(go.Bar(
@@ -170,16 +139,6 @@ def figures_strategy_for_webapp():
     fourth_graph = []
     # test sp500 vs the strategy performance
     forward_21d_strtgy = factor_returns[['21D']]
-
-    #sp500_dataset_df = pd.read_hdf(file_path, key='df')
-    #sp500_data = sp500_dataset_df['Adj Close'].unstack('Ticker')
-    #forward_21d_sp500 = pd.DataFrame(sp500_data.pct_change(21, fill_method=None).shift(-21).mean(axis=1).dropna(), columns=["S&P500"])
-
-    # csv version
-    # forward_21d_sp500 = pd.read_hdf("./data/fwd_ret_21d_sp500.h5", key="df")
-    # forward_21d_sp500 = pd.read_csv("data/strategy_optimization_2019_2023/fwd_ret_21d_sp500.csv",
-    #                                 index_col=[0],
-    #                                 parse_dates=[0])
     # aws s3 version
     forward_21d_sp500 = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/fwd_ret_21d_sp500.csv",
                                                                     index_type="date")
@@ -222,10 +181,6 @@ def figures_strategy_for_webapp():
 
         titlefont=dict(size=14),
     )
-    # Create the figure
-    # fig = go.Figure(data=[sp500_bar, strategy_bar], layout=layout)
-    # Show the figure
-    # fig.show()
 
     figures = []
     figures.append(dict(data=first_graph, layout=layout_one))

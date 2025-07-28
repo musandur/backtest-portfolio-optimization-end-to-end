@@ -3,14 +3,8 @@ import plotly.graph_objs as go
 import statsmodels.api as sm
 import os
 import numpy as np
-# import alphalens as al
-# import matplotlib.pyplot as plt
 from scipy.stats import norm
-
-# import utils module
-# from data_manip import utils
 from src import utils
-#import utils
 
 idx = pd.IndexSlice
 window_size = 21   # number days: lookback periods
@@ -29,36 +23,8 @@ class AlgoStrategy:
         """
         self.universe_df = universe_df
         self.list_tickers = tickers
-
-    # def get_universe(self, start_date='2019-01-01', end_date='2022-12-31'):
-    #     '''
-    #         extract the trading universe from the data
-    #     '''
-    #     #base_path = os.path.dirname(os.path.abspath(__file__))
-    #     #file_path = os.path.join(base_path, self.path_to_data)
-
-    #     data_prices = pd.read_hdf(self.path_to_data, key="df")
-
-    #     df = data_prices.loc[:, idx[start_date:end_date], :]
-    #     # select 21 most traded assets in terms of highest volume
-    #     selected_assets = df['Adj Close'].mul(df.Volume)\
-    #         .groupby('Date')\
-    #         .rank(ascending=True)\
-    #         .unstack()\
-    #         .dropna()\
-    #         .mean(axis=1)\
-    #         .nlargest(21)\
-    #         .index\
-    #         .tolist()
-    #     # remove GOOGL ticker to avoid duplicates with GOOG
-    #     selected_assets = [x for x in selected_assets if x != 'GOOGL']
-    #     universe_df = df.loc[selected_assets, :]['Adj Close'].unstack('Ticker')
-
-    #     return selected_assets, universe_df
     
     def stock_polynomial_regression(self, ticker_name, rounding_error=6):
-
-        # _, df = self.get_universe()
 
         ticker_prices = self.universe_df[ticker_name]
         N = len(ticker_prices)
@@ -85,12 +51,9 @@ class AlgoStrategy:
     def momentum_alpha_factor_construction(self):
 
         list_tickers = self.list_tickers
-        # df = self.universe_df
-
         list_df = []
 
         for ticker in list_tickers:
-            # coefs_df = pd.DataFrame()
             coefs_df = self.stock_polynomial_regression(ticker_name=ticker)
             # print(coefs_df)
             
@@ -104,7 +67,6 @@ class AlgoStrategy:
         result = result.groupby('Date').apply(lambda x: x).droplevel(1)
 
         # construct the alpha factor
-        # ranking_func = lambda x: x.rank(ascending=True)
         ranked_gain = result.groupby('Date')['gain'].transform(lambda x: x.rank(ascending=True))
         ranked_acc = result.groupby('Date')['acc'].transform(lambda x: x.rank(ascending=True))
         result['alpha_factor'] = pd.DataFrame(ranked_gain*ranked_acc)#.rename(columns={0:'ranked_alpha'})
@@ -113,9 +75,7 @@ class AlgoStrategy:
     
     def alpha_factors_and_forward_returns(self, periods):
         alpha_fac = self.momentum_alpha_factor_construction()
-        # factor = pd.DataFrame(alpha_fac['alpha_factor'])
         close_prices = self.universe_df
-        # periods = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 21)
         
         forward_returns = utils.fixed_compute_forward_returns(alpha_fac, close_prices, periods)
 
@@ -298,227 +258,3 @@ if __name__ == "__main__":
     # Combine the plots into a figure
     fig = go.Figure(data=[histogram, normal_dist, mean_line], layout=layout)
     fig.show()
-
-    # alpha_fac = strtgy.momentum_alpha_factor_construction()
-    # alpha_df = pd.DataFrame(alpha_fac['alpha_factor'])
-    # _, prices = strtgy.get_universe()
-    # fwd = strtgy.fixed_compute_forward_returns(alpha_fac, prices, [1, 2, 3])
-    # gcf = strtgy.get_clean_factor(alpha_fac['alpha_factor'], fwd)
-
-    # print(f"Alpha factors: \n {alpha_fac['alpha_factor']}")
-    # print(f"Alpha factors: \n {fwd}")
-    
-    # print(f"alpha data: \n {gcf}")
-
-
-
-
-
-    # test get_clean_factor()
-    # factor = alpha_fac['alpha_factor']
-    # initial_amount = float(len(factor.index))
-
-    # factor_copy = factor.copy()
-    # factor_copy.index = factor_copy.index.rename(['date', 'asset'])
-    # factor_copy = factor_copy[np.isfinite(factor_copy)]
-    # merged_data = fwd.copy()
-    # merged_data['factor'] = factor_copy
-    # merged_data = merged_data.dropna()
-    # print(f"merged_data:\n {merged_data}")
-    # fwdret_amount = float(len(merged_data.index))
-    # max_loss = 0.35
-    # no_raise = False if max_loss == 0 else True
-    # quantiles = 5
-    # bins = None
-    # binning_by_group = False
-    # zero_aware = False
-    # quantile_data = al.utils.quantize_factor(merged_data, quantiles, bins, binning_by_group, no_raise, zero_aware)
-    # print(f"quantile_data:\n {quantile_data}")
-    # quantile_data.index = quantile_data.index.droplevel(0)
-    # print(f"quantile_data:\n {quantile_data}")
-
-
-
-
-    #gcf = strtgy.get_clean_factor(alpha_fac['alpha_factor'], fwd)
-    #alpha_data = strtgy.alpha_factors_and_forward_returns()
-
-    #print(f"Alpha factors: \n {alpha_fac['alpha_factor']}")
-    #print(f"Alpha factors: \n {fwd}")
-    
-    #print(f"alpha data: \n {alpha_data.head(23)}")
-
-
-
-
-# ## wrangling module for all four graphs
-
-
-# def cleandata(dataset, keepcolumns=['Country Name', '1990', '2015'], value_variables=['1990', '2015']):
-#     """Clean world bank data for a visualizaiton dashboard
-
-#     Keeps data range of dates in keep_columns variable and data for the top 10 economies
-#     Reorients the columns into a year, country and value
-#     Saves the results to a csv file
-
-#     Args:
-#         dataset (str): name of the csv data file
-
-#     Returns:
-#         None
-
-#     """   
- 
-#     base_path = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
-#     file_path = os.path.join(base_path, dataset)  #
-
-#     df = pd.read_csv(file_path, skiprows=4)
-
-#     #df = pd.read_csv(dataset, skiprows=4)
-
-#     # Keep only the columns of interest (years and country name)
-#     df = df[keepcolumns]
-
-#     top10country = ['United States', 'China', 'Japan', 'Germany', 'United Kingdom', 'India', 'France', 'Brazil', 'Italy', 'Canada']
-#     df = df[df['Country Name'].isin(top10country)]
-
-#     # melt year columns  and convert year to date time
-#     df_melt = df.melt(id_vars='Country Name', value_vars = value_variables)
-#     df_melt.columns = ['country','year', 'variable']
-#     df_melt['year'] = df_melt['year'].astype('datetime64[ns]').dt.year
-
-#     # output clean csv file
-#     return df_melt
-
-
-# def return_figures():
-#     """Creates four plotly visualizations
-
-#     Args:
-#         None
-
-#     Returns:
-#         list (dict): list containing the four plotly visualizations
-#     """
-
-#     # first chart plots arable land from 1990 to 2015 in top 10 economies 
-#     # as a line chart
-#     graph_one = []
-#     df = cleandata('data/API_AG.LND.ARBL.HA.PC_DS2_en_csv_v2.csv')
-#     df.columns = ['country', 'year', 'hectaresarablelandperperson']
-#     df.sort_values('hectaresarablelandperperson', ascending=False, inplace=True)
-#     countrylist = df.country.unique().tolist()
-
-#     for country in countrylist:
-#         x_val = df[df['country'] == country].year.tolist()
-#         y_val = df[df['country'] == country].hectaresarablelandperperson.tolist()
-#         graph_one.append(
-#             go.Scatter(
-#                 x=x_val,
-#                 y=y_val,
-#                 mode='lines',
-#                 name=country
-#             )
-#         )
-
-#     layout_one = dict(
-#         title='Change in Hectares Arable Land <br> per Person 1990 to 2015',
-#         xaxis=dict(title='Year', autotick=False, tick0=1990, dtick=25),
-#         yaxis=dict(title='Hectares'),
-#     )
-
-#     # second chart plots arable land for 2015 as a bar chart    
-#     graph_two = []
-#     df = cleandata('data/API_AG.LND.ARBL.HA.PC_DS2_en_csv_v2.csv')
-#     df.columns = ['country', 'year', 'hectaresarablelandperperson']
-#     df.sort_values('hectaresarablelandperperson', ascending=False, inplace=True)
-#     df = df[df['year'] == 2015]
-
-#     graph_two.append(
-#         go.Bar(
-#             x=df.country.tolist(),
-#             y=df.hectaresarablelandperperson.tolist(),
-#         )
-#     )
-
-#     layout_two = dict(
-#         title='Hectares Arable Land per Person in 2015',
-#         xaxis=dict(title='Country'),
-#         yaxis=dict(title='Hectares per person'),
-#     )
-
-#     # third chart plots percent of population that is rural from 1990 to 2015
-#     graph_three = []
-#     df = cleandata('data/API_SP.RUR.TOTL.ZS_DS2_en_csv_v2_9948275.csv')
-#     df.columns = ['country', 'year', 'percentrural']
-#     df.sort_values('percentrural', ascending=False, inplace=True)
-    
-#     for country in countrylist:
-#         x_val = df[df['country'] == country].year.tolist()
-#         y_val = df[df['country'] == country].percentrural.tolist()
-#         graph_three.append(
-#             go.Scatter(
-#                 x=x_val,
-#                 y=y_val,
-#                 mode='lines',
-#                 name=country
-#             )
-#         )
-
-#     layout_three = dict(
-#         title='Change in Rural Population <br> (Percent of Total Population)',
-#         xaxis=dict(title='Year', autotick=False, tick0=1990, dtick=25),
-#         yaxis=dict(title='Percent'),
-#     )
-
-#     # fourth chart shows rural population vs arable land
-#     graph_four = []
-
-#     valuevariables = [str(x) for x in range(1995, 2016)]
-#     keepcolumns = [str(x) for x in range(1995, 2016)]
-#     keepcolumns.insert(0, 'Country Name')
-
-#     df_one = cleandata('data/API_SP.RUR.TOTL_DS2_en_csv_v2_9914824.csv', keepcolumns, valuevariables)
-#     df_two = cleandata('data/API_AG.LND.FRST.K2_DS2_en_csv_v2_9910393.csv', keepcolumns, valuevariables)
-
-#     df_one.columns = ['country', 'year', 'variable']
-#     df_two.columns = ['country', 'year', 'variable']
-
-#     df = df_one.merge(df_two, on=['country', 'year'])
-
-#     for country in countrylist:
-#         x_val = df[df['country'] == country].variable_x.tolist()
-#         y_val = df[df['country'] == country].variable_y.tolist()
-#         year = df[df['country'] == country].year.tolist()
-#         country_label = df[df['country'] == country].country.tolist()
-
-#         text = []
-#         for country, year in zip(country_label, year):
-#             text.append(str(country) + ' ' + str(year))
-
-#         graph_four.append(
-#             go.Scatter(
-#                 x=x_val,
-#                 y=y_val,
-#                 mode='markers',
-#                 text=text,
-#                 name=country,
-#                 textposition='top right'
-#             )
-#         )
-
-#     layout_four = dict(
-#         title='Rural Population versus <br> Forested Area (Square Km) 1990-2015',
-#         xaxis=dict(title='Rural Population'),
-#         yaxis=dict(title='Forest Area (square km)'),
-#     )
-
-#     # append all charts to the figures list
-#     figures = []
-#     figures.append(dict(data=graph_one, layout=layout_one))
-#     figures.append(dict(data=graph_two, layout=layout_two))
-#     figures.append(dict(data=graph_three, layout=layout_three))
-#     figures.append(dict(data=graph_four, layout=layout_four))
-
-#     return figures
-

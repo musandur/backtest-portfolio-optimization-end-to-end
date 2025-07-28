@@ -15,19 +15,10 @@ from src import aws_s3bucket_load_data
 hold_period = 21
 periods = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 21)
 
-# #path = '../data/stock_prices.h5'
-# path = '../data/stock_prices.csv'
-
-# base_path = os.path.dirname(os.path.abspath(__file__))
-# file_path = os.path.join(base_path, path)
-
-# aws_df = aws_s3bucket_data.load_data_from_aws_s3_csv(bucket_name="equity-data-mndour", object_key="stock_prices.csv")
 aws_df = aws_s3bucket_load_data.load_csv_from_aws_s3("stock_prices.csv",
                                                      index_type="multi")
 
-#list_tickers, data = utils.get_universe(file_path)
 list_tickers, data = utils.get_universe_from_aws_data(aws_df)
-# straj_obj = strategy_performance.AlgoStrategy(list_tickers, data)
 
 ret = data.pct_change(hold_period).dropna()
 ret_df = pd.DataFrame(ret.unstack(), columns=[f'{hold_period}_d_ret'])
@@ -59,11 +50,7 @@ def figures_optimization_for_webapp():
 
     # factor betas graph
     first_graph = []
-    #betas_df = portfolio_optimization.get_beta_factors(ff_and_ret_df) # to be saved as a file for speed up
-    # csv version
-    # betas_df = pd.read_hdf("./data/po_betas_df.h5", key='df')
-    # betas_df = pd.read_csv("data/strategy_optimization_2019_2023/po_betas_df.csv",
-    #                        index_col=[0])
+    
     # aws s3 version
     betas_df = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/po_betas_df.csv",
                                                            index_type="plain")
@@ -97,29 +84,10 @@ def figures_optimization_for_webapp():
     
     # next optimal weights graph
     second_graph = []
-    # F = portfolio_optimization.get_risk_factor_cov_mat(ff_df, ff_and_ret_df)
-    # S = portfolio_optimization.get_idiosyncratic_var(ff_and_ret_df, betas_df, ff_df)   
-
-    # optimal weights
-    #alpha_data = straj_obj.alpha_factors_and_forward_returns(periods)
-    #alpha_vector = alpha_data[['factor']].loc[alpha_data.index.unique('date')[-1]]
-    #alpha_vector = alpha_vector.transform(utils.demean_and_normalize)                    # to be saved as a file to speed up 
-
-    # csv version
-    #alpha_vector = pd.read_hdf("./data/po_alpha_vector.h5", key='df')
-    # alpha_vector = pd.read_csv("data/strategy_optimization_2019_2023/po_alpha_vector.csv",
-    #                            index_col=[0])
+    
     # aws s3 version
     alpha_vector = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/po_alpha_vector.csv",
                                                                index_type="plain")
-
-    #optimal_weights = portfolio_obj.solve_optimal_holdings(alpha_vector, betas_df, S, F)
-    #optimal_weights.rename(columns={0: 'optimal_weights'}, inplace=True)                  # to be saved as a file for speed up
-
-    # csv version
-    #optimal_weights = pd.read_hdf("./data/po_optimal_weights_df.h5", key='df')
-    # optimal_weights = pd.read_csv("data/strategy_optimization_2019_2023/po_optimal_weights_df.csv",
-    #                               index_col=[0])
     # aws s3 version 
     optimal_weights = aws_s3bucket_load_data.load_csv_from_aws_s3("strategy_optimization_2019_2023/po_optimal_weights_df.csv",
                                                                   index_type="plain")
@@ -137,8 +105,6 @@ def figures_optimization_for_webapp():
                    x=0.5, y=0.95, xanchor='center', yanchor='top'),
         xaxis=dict(title="Assets", tickangle=-45),
         yaxis=dict(title="Optimal Values"),
-        #width=600,
-        #height=600,
         legend=dict(title="Legend:", orientation="h", y=1.15),
         bargap=2.95
 
@@ -162,8 +128,6 @@ def figures_optimization_for_webapp():
         title=dict(text="Portfolio: Optimal Risk Exposure", x=0.5, y=0.95, xanchor='center', yanchor='top'),
         xaxis=dict(title="Risk Factors", tickangle=-45),
         yaxis=dict(title="Exposure Level"),
-        #width=600,
-        #height=600,
         bargap=0.6
     )
 
@@ -200,8 +164,6 @@ def figures_optimization_for_webapp():
     # Define layout
     layout_four = dict(
         title=dict(text="(Predictive) Alpha Vector vs. (Estimated) Optimal Weights", font_size=18),
-        #height=600,
-        #width=600,
         template="plotly_white",
         xaxis=dict(title="",
                    tickangle=-45,
